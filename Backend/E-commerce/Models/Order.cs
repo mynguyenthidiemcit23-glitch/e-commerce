@@ -8,38 +8,35 @@ namespace E_commerce.Models
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        [Required]
-        public DateTime OrderDate { get; set; }
+        [Required(ErrorMessage = "Order Date is required.")]
+        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
-        [Required]
         [Column(TypeName = "decimal(18,2)")]
-        [Range(0, double.MaxValue)]
         public decimal SubTotal { get; set; }
 
-        [Required]
         [Column(TypeName = "decimal(18,2)")]
-        [Range(0, double.MaxValue)]
         public decimal TotalAmount { get; set; }
 
+        [Required(ErrorMessage ="Order status is required.")]
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
-        [Required]
+        [Required(ErrorMessage ="UserId is required.") ]
         public Guid UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public User User { get; set; }
+        public User? User { get; set; }
 
-        [Required]
-        [StringLength(100)]
-        public string ShippingAddress { get; set; }
+        [Required(ErrorMessage ="Shipping Address is required.")]
+        [StringLength(255)]
+        public string ShippingAddress { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage ="PaymentMethodId is required.")]
         public Guid PaymentMethodId { get; set; }
 
         [ForeignKey("PaymentMethodId")]
-        public PaymentMethod PaymentMethod { get; set; }
+        public PaymentMethod? PaymentMethod { get; set; }
 
-        public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
         // 1 order có thể có 1 hoặc không support request => không icollection
 
@@ -49,6 +46,7 @@ namespace E_commerce.Models
         [ForeignKey("VoucherId")]
         public Voucher? Voucher { get; set; }
     }
+
     public enum OrderStatus
     {
         Pending,
